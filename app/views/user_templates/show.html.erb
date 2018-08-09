@@ -1,0 +1,103 @@
+<div class="row">
+  <div class="col-md-8 offset-md-2">
+    <div class="jumbotron">
+      <h3>
+        <%= @user.username %>
+      </h3>
+    </div>
+  </div>
+</div>
+
+<div class="row mb-5">
+  <div class="col-md-8 offset-md-2">
+    <% Photo.where(user_id: @user.id).each do |photo|%>
+    <div class="card">
+      <div class="card-header">
+        <h4 class="card-title">
+          <a href="/users/<%= photo.user_id%>"><%= @user.username%></a>
+          <small>
+            <%= time_ago_in_words(photo.created_at)%>
+          </small>
+        </h4>
+      </div>
+
+      <div class="card-body">
+        <a href="/photos/<%= photo.id%>">
+          <img src="<%= photo.image%>" class="img-fluid">
+        </a>
+
+        <div>
+
+            <form action="/create_like" method="post">
+
+              <input type="hidden" name="photo_id" value="<%= photo.id%>">
+
+              <input type="hidden" name="user_id" value="<%= current_user.id %>">
+
+                <small>
+                  danrosen, charles, and John John
+                  like
+                  this
+                </small>
+
+              <button class="btn btn-link pull-right">
+                <i class="far fa-heart"></i>
+
+                Like
+              </button>
+            </form>
+
+          <ul class="list-unstyled pt-3">
+            
+            <% Comment.where(photo_id: photo.id).each do |comment|%>
+              <li class="media mb-2">
+                <div class="media-body">
+                  <h6>
+                    <a href="/users/<%= comment.user_id%>"><%= User.find(comment.user_id).username%></a>
+                    <small>
+                      <%= time_ago_in_words(comment.created_at)%> ago
+                    </small>
+                  </h6>
+
+                  <%= comment.body%>
+                </div> <!-- media-body -->
+              </li>
+            <% end%>
+
+            <li class="media">
+              <div class="media-body">
+                <form action="/create_comment" method="post" class="pt-4">
+
+                  <input type="hidden" name="photo_id" value="<%= photo.id%>">
+
+                  <input type="hidden" name="user_id" value="<%= current_user.id %>">
+
+                  <!-- Label and input for body -->
+                  <div class="form-group">
+                    <label for="body" class="sr-only">
+                      Body
+                    </label>
+
+                    <div class="input-group">
+                      <input type="text" id="body" name="body" class="form-control" placeholder="Add a comment..." required="">
+
+                      <span class="input-group-append">
+                        <button class="btn btn-primary" type="submit">
+                          <i class="far fa-comment"></i>
+
+                          Add Comment
+                        </button>
+                      </span>
+                    </div> <!-- input-group -->
+                  </div>  <!-- form-group -->
+                </form>
+              </div> <!-- media-body -->
+            </li>
+          </ul>
+
+        </div>
+      </div> <!-- card-body -->
+    </div> <!-- card  -->
+    <% end %>
+  </div> <!-- col-md-8 offset-md-2 -->
+</div>
